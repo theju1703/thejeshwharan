@@ -27,7 +27,6 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         nav {
             display: flex;
@@ -166,6 +165,9 @@
             text-decoration: none;
             font-weight: 600;
         }
+        .project-link:hover {
+            text-decoration: underline;
+        }
         .contact-section {
             background: #1a1a2e;
             color: white;
@@ -201,6 +203,12 @@
                 gap: 15px;
                 margin-top: 15px;
             }
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -235,11 +243,11 @@
             <div class="services-grid">
                 <div class="service-card">
                     <h3>💻 Full-Stack Web Development</h3>
-                    <p>Custom web applications, REST APIs, and responsive frontend interfaces.</p>
+                    <p>Custom web applications, REST APIs, and responsive frontend interfaces using Spring Boot and Flask.</p>
                 </div>
                 <div class="service-card">
                     <h3>🧠 AI & Machine Learning</h3>
-                    <p>Image classification, predictive analytics, and computer vision solutions.</p>
+                    <p>Image classification, predictive analytics, and computer vision solutions using TensorFlow and Keras.</p>
                 </div>
                 <div class="service-card">
                     <h3>🚀 Digital Transformation</h3>
@@ -256,19 +264,19 @@
                 <div class="project-card">
                     <span class="project-tag">AI/ML</span>
                     <h3>🌍 Earthquake Magnitude Estimation</h3>
-                    <p>CNN-based deep learning system for earthquake magnitude prediction with 88% accuracy.</p>
+                    <p>CNN-based deep learning system that estimates earthquake magnitudes from seismic data with 88% accuracy.</p>
                     <a href="#" class="project-link">View Case Study →</a>
                 </div>
                 <div class="project-card">
                     <span class="project-tag">Computer Vision</span>
                     <h3>🏔️ Terrain Recognition System</h3>
-                    <p>AI-powered image classification with 80% accuracy, deployed via Flask.</p>
+                    <p>AI-powered image classification system with 80% accuracy, deployed as a Flask web application.</p>
                     <a href="#" class="project-link">View Case Study →</a>
                 </div>
                 <div class="project-card">
                     <span class="project-tag">Full-Stack</span>
                     <h3>💼 3QSpace Digital Platform</h3>
-                    <p>Complete business website with Spring Boot, MySQL, and automated emails.</p>
+                    <p>Complete business website with Spring Boot backend, MySQL database, and automated email notifications.</p>
                     <a href="#" class="project-link">View Case Study →</a>
                 </div>
             </div>
