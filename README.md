@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 \# 🚀 Thejeshwharan B - Freelance Full-Stack Developer
 
 
@@ -106,17 +107,14 @@ Complete business website with Spring Boot, MySQL, and automated email notificat
 
 
 
-\## 📞 Let's Work Together
+## 📞 Let's Work Together
 
+📧 **Email**: thejeshwharan.theju@gmail.com
+📱 **Phone**: +91-8189923787
+📍 **Location**: Bangalore, India
+🔗 **LinkedIn**: [thejeshwharan-b](https://www.linkedin.com/in/thejeshwharan-b-82a108248/)
 
-
-📧 \*\*Email\*\*: thejeshwharan.theju@gmail.com
-
-📱 \*\*Phone\*\*: +91-8189923787
-
-📍 \*\*Location\*\*: Bangalore, India
-
-
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/thejeshwharan-b-82a108248/)
 
 \---
 
@@ -124,3 +122,7 @@ Complete business website with Spring Boot, MySQL, and automated email notificat
 
 © 2024 Thejeshwharan B | Freelance Full-Stack Developer
 
+=======
+# thejeshwharan
+Professional Portfolio - Full-Stack Developer &amp; AIML Enthusiast
+>>>>>>> 9e2b178254aad027ed90eaaab8a2f49f8d1abab6
