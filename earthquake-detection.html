@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Earthquake Magnitude Estimation System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .case-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            padding: 60px 0 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .case-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(79, 195, 247, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .case-header .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .case-header .badge {
+            display: inline-block;
+            background: rgba(79, 195, 247, 0.2);
+            color: #4fc3f7;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            margin-bottom: 20px;
+        }
+
+        .case-header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .case-header h1 span {
+            color: #4fc3f7;
+        }
+
+        .case-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .header-meta .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-meta .meta-item i {
+            color: #4fc3f7;
+        }
+
+        /* Back Button */
+        .back-btn {
+            display: inline-block;
+            margin: 20px 0;
+            color: #4fc3f7;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-5px);
+        }
+
+        /* Sections */
+        section {
+            padding: 50px 0;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title .icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #4fc3f7, #0288d1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .section-title span {
+            color: #0f3460;
+        }
+
+        .highlight-box {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border-left: 5px solid #4fc3f7;
+        }
+
+        .highlight-box.warning {
+            border-left-color: #ff6b6b;
+        }
+
+        .highlight-box.success {
+            border-left-color: #51cf66;
+        }
+
+        .highlight-box.gold {
+            border-left-color: #fcc419;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .card .card-icon {
+            font-size: 2.5rem;
+            color: #4fc3f7;
+            margin-bottom: 15px;
+        }
+
+        .card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #1a1a2e;
+        }
+
+        .card p, .card li {
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .card ul li {
+            padding: 5px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .card ul li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #4fc3f7;
+            font-weight: bold;
+        }
+
+        /* Code Block */
+        .code-block {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .code-block .lang-tag {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: rgba(79, 195, 247, 0.2);
+            color: #4fc3f7;
+            font-size: 0.7rem;
+            padding: 2px 12px;
+            border-radius: 12px;
+        }
+
+        .code-block .comment {
+            color: #6c8a9e;
+        }
+
+        .code-block .keyword {
+            color: #c792ea;
+        }
+
+        .code-block .string {
+            color: #c3e88d;
+        }
+
+        .code-block .function {
+            color: #82aaff;
+        }
+
+        .code-block .number {
+            color: #f78c6c;
+        }
+
+        /* Pipeline Flow */
+        .pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            margin: 20px 0;
+        }
+
+        .pipeline-step {
+            background: linear-gradient(135deg, #4fc3f7, #0288d1);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .pipeline-step:nth-child(2) { background: linear-gradient(135deg, #51cf66, #2b8a3e); }
+        .pipeline-step:nth-child(3) { background: linear-gradient(135deg, #fcc419, #e67700); }
+        .pipeline-step:nth-child(4) { background: linear-gradient(135deg, #ff6b6b, #c92a2a); }
+        .pipeline-step:nth-child(5) { background: linear-gradient(135deg, #845ef7, #5f3dc4); }
+
+        .pipeline-arrow {
+            font-size: 1.5rem;
+            color: #4fc3f7;
+        }
+
+        /* Stats Table */
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+        }
+
+        .stats-table th {
+            background: #1a1a2e;
+            color: white;
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .stats-table td {
+            padding: 12px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stats-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .stats-table tr:hover td {
+            background: #f8f9fa;
+        }
+
+        .stats-table .value {
+            font-weight: 700;
+            color: #4fc3f7;
+        }
+
+        /* Progress Bars */
+        .progress-bar {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin: 5px 0;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #4fc3f7, #0288d1);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: width 1s ease;
+        }
+
+        .progress-bar .fill.green { background: linear-gradient(90deg, #51cf66, #2b8a3e); }
+        .progress-bar .fill.orange { background: linear-gradient(90deg, #fcc419, #e67700); }
+        .progress-bar .fill.purple { background: linear-gradient(90deg, #845ef7, #5f3dc4); }
+        .progress-bar .fill.red { background: linear-gradient(90deg, #ff6b6b, #c92a2a); }
+
+        /* Tags */
+        .tech-tag {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 3px;
+        }
+
+        .tech-tag.python { background: #e8f5e9; color: #2e7d32; }
+        .tech-tag.java { background: #fff3e0; color: #e65100; }
+        .tech-tag.js { background: #fff8e1; color: #f57f17; }
+        .tech-tag.sql { background: #e3f2fd; color: #0d47a1; }
+        .tech-tag.ml { background: #f3e5f5; color: #6a1b9a; }
+
+        /* Feature List */
+        .feature-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .feature-list li i {
+            color: #4fc3f7;
+            font-size: 1.2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .case-header h1 {
+                font-size: 2rem;
+            }
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            .feature-list {
+                grid-template-columns: 1fr;
+            }
+            .pipeline {
+                flex-direction: column;
+            }
+            .pipeline-arrow {
+                transform: rotate(90deg);
+            }
+            .header-meta {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="case-header">
+        <div class="container">
+            <div class="badge"><i class="fas fa-robot"></i> AI / Deep Learning</div>
+            <h1>🌍 Earthquake Magnitude <span>Estimation System</span></h1>
+            <p>Using 1D Convolutional Neural Networks to predict earthquake magnitudes from HR-GNSS seismic data with 88% accuracy</p>
+            <div class="header-meta">
+                <div class="meta-item"><i class="fas fa-clock"></i> Duration: 6 Months</div>
+                <div class="meta-item"><i class="fas fa-user"></i> Role: Lead Developer & ML Engineer</div>
+                <div class="meta-item"><i class="fas fa-chart-line"></i> Accuracy: 88%</div>
+            </div>
+            <br>
+            <a href="../index.html#projects" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Portfolio</a>
+        </div>
+    </header>
+
+    <!-- ===== OVERVIEW ===== -->
+    <section>
+        <div class="container">
+            <div class="section-title">
+                <div class="icon"><i class="fas fa-info-circle"></i></div>
+                <h2>Project <span>Overview</span></h2>
+            </div>
+
+            <div class="highlight-box">
+                <p style="font-size: 1.1rem;">A deep learning system that automatically estimates earthquake magnitudes from <strong>HR-GNSS (High-Rate Global Navigation Satellite System)</strong> seismic waveform data using <strong>1D Convolutional Neural Networks</strong>.</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-bullseye"></i></div>
+                    <h4>🎯 The Challenge</h4>
+                    <p>Traditional earthquake detection methods are slow, error-prone, and not scalable for real-time monitoring.</p>
+                    <ul>
+                        <li>⏱️ Manual analysis takes hours</li>
+                        <li>❌ Prone to human error</li>
+                        <li>📊 Inconsistent results</li>
+                        <li>🚫 No real-time capability</li>
+                    </ul>
+                </div>
+                <div class="card" style="border: 2px solid #4fc3f7;">
+                    <div class="card-icon"><i class="fas fa-lightbulb"></i></div>
+                    <h4>💡 The Solution</h4>
+                    <p>An automated deep learning pipeline that processes seismic data and predicts magnitudes instantly.</p>
+                    <ul>
+                        <li>✅ 88% accuracy</li>
+                        <li>⚡ Real-time predictions</li>
+                        <li>🤖 Fully automated</li>
+                        <li>📈 Scalable architecture</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PIPELINE ===== -->
+    <section style="background: #f8f9fa;">
+        <div class="container">
+            <div class="section-title">
+                <div class="icon"><i class="fas fa-project-diagram"></i></div>
+                <h2>System <span>Pipeline</span></h2>
+            </div>
+
+            <div class="pipeline">
+                <div class="pipeline-step"><i class="fas fa-database"></i> HR-GNSS Data</div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step"><i class="fas fa-cogs"></i> Preprocessing</div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step"><i class="fas fa-layer-group"></i> Clustering</div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step"><i class="fas fa-brain"></i> CNN Model</div>
+                <span class="pipeline-arrow">→</span>
+                <div class="pipeline-step"><i class="fas fa-chart-bar"></i> Magnitude Prediction</div>
+            </div>
+
+            <div class="grid-4" style="margin-top: 20px;">
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 2rem; color: #4fc3f7;">📡</div>
+                    <h4>HR-GNSS Data</h4>
+                    <p style="font-size: 0.85rem;">High-frequency ground displacement measurements</p>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 2rem; color: #51cf66;">🔧</div>
+                    <h4>Preprocessing</h4>
+                    <p style="font-size: 0.85rem;">Normalization & reshaping for model input</p>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 2rem; color: #fcc419;">📊</div>
+                    <h4>Clustering</h4>
+                    <p style="font-size: 0.85rem;">Pattern recognition with KMeans</p>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 2rem; color: #845ef7;">🧠</div>
+                    <h4>CNN Model</h4>
+                    <p style="font-size: 0.85rem;">1D Convolutional Neural Network</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TECHNICAL IMPLEMENTATION ===== -->
+    <section>
+        <div class="container">
+            <div class="section-title">
+                <div class="icon"><i class="fas fa-code"></i></div>
+                <h2>Technical <span>Implementation</span></h2>
+            </div>
+
+            <div class="highlight-box success">
+                <h4>📊 Data Preprocessing</h4>
+                <div class="code-block">
+                    <span class="lang-tag">Python</span>
+                    <pre style="margin: 0; color: #e0e0e0; font-family: 'Courier New', monospace;">
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> MinMaxScaler
+
+<span class="comment"># Memory mapping - loads data on-demand</span>
+data = np.load(<span class="string">'seismic_data.npz'</span>, mmap_mode=<span class="string">'r'</span>)
+waveforms = data[<span class="string">'waveforms'</span>]
+magnitudes = data[<span class="string">'magnitudes'</span>]
+
+<span class="comment"># Normalize to [0,1] range</span>
+scaler = MinMaxScaler()
+X_normalized = scaler.fit_transform(waveforms.reshape(n_samples, -1))
+X_cnn = X_normalized.reshape(n_samples, waveform_length, channels)</pre>
+                </div>
+            </div>
+
+            <div class="highlight-box gold">
+                <h4>🧠 CNN Architecture</h4>
+                <div class="code-block">
+                    <span class="lang-tag">Python / Keras</span>
+                    <pre style="margin: 0; color: #e0e0e0; font-family: 'Courier New', monospace;">
+<span class="keyword">from</span> tensorflow.keras.models <span class="keyword">import</span> Sequential
+<span class="keyword">from</span> tensorflow.keras.layers <span class="keyword">import</span> Conv1D, MaxPooling1D, Flatten, Dense, Dropout
+
+model = Sequential([
+    <span class="comment"># First Convolutional Block</span>
+    Conv1D(<span class="number">64</span>, <span class="number">3</span>, activation=<span class="string">'relu'</span>, input_shape=(waveform_length, channels)),
+    MaxPooling1D(<span class="number">2</span>),
+
+    <span class="comment"># Second Convolutional Block</span>
+    Conv1D(<span class="number">128</span>, <span class="number">3</span>, activation=<span class="string">'relu'</span>),
+    MaxPooling1D(<span class="number">2</span>),
+
+    <span class="comment"># Third Convolutional Block</span>
+    Conv1D(<span class="number">256</span>, <span class="number">3</span>, activation=<span class="string">'relu'</span>),
+    MaxPooling1D(<span class="number">2</span>),
+
+    <span class="comment"># Dense Layers</span>
+    Flatten(),
+    Dense(<span class="number">256</span>, activation=<span class="string">'relu'</span>),
+    Dropout(<span class="number">0.5</span>),  <span class="comment"># Prevents overfitting</span>
+    Dense(<span class="number">1</span>)  <span class="comment"># Regression output for magnitude</span>
+])</pre>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-wave-square"></i></div>
+                    <h4>Feature Extraction</h4>
+                    <ul>
+                        <li>Frequency Patterns</li>
+                        <li>Amplitude Changes</li>
+                        <li>Temporal Patterns</li>
+                        <li>Waveform Shapes</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-robot"></i></div>
+                    <h4>Model Training</h4>
+                    <ul>
+                        <li>90-10 Train-Test Split</li>
+                        <li>Early Stopping</li>
+                        <li>Adam Optimizer</li>
+                        <li>MSE Loss Function</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="card-icon"><i class="fas fa-chart-simple"></i></div>
+                    <h4>Evaluation Metrics</h4>
+                    <ul>
+                        <li>Mean Squared Error</li>
+                        <li>Mean Absolute Error</li>
+                        <li>Accuracy: 88%</li>
+                        <li>Inference: &lt;1 sec</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== RESULTS ===== -->
+    <section style="background: #f8f9fa;">
+        <div class="container">
+            <div class="section-title">
+                <div class="icon"><i class="fas fa-trophy"></i></div>
+                <h2>Results & <span>Achievements</span></h2>
+            </div>
+
+            <div class="grid-2">
+                <div>
+                    <table class="stats-table">
+                        <thead>
+                            <tr><th>Metric</th><th>Value</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Training Accuracy</td><td class="value">92%</td></tr>
+                            <tr><td>Testing Accuracy</td><td class="value">88%</td></tr>
+                            <tr><td>Inference Time</td><td class="value">&lt; 1 second</td></tr>
+                            <tr><td>MSE Loss</td><td class="value">0.023</td></tr>
+                            <tr><td>MAE</td><td class="value">0.15</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card" style="background: #1a1a2e; color: white;">
+                    <h4 style="color: #4fc3f7;">Key Achievements</h4>
+                    <ul style="color: #ddd;">
+                        <li>✅ 88% accuracy in magnitude prediction</li>
+                        <li>⚡ Real-time processing (&lt; 1 second)</li>
+                        <li>🤖 Fully automated pipeline</li>
+                        <li>📈 Scalable architecture</li>
+                        <li>🌍 Works across diverse earthquake events</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h4 style="margin-bottom: 15px;">Feature Importance</h4>
+                <div class="card">
+                    <div><strong>Frequency Patterns</strong> <span style="float: right; color: #4fc3f7;">95%</span></div>
+                    <div class="progress-bar"><div class="fill" style="width: 95%;">95%</div></div>
+                    <div style="margin-top: 10px;"><strong>Amplitude Changes</strong> <span style="float: right; color: #4fc3f7;">92%</span></div>
+                    <div class="progress-bar"><div class="fill green" style="width: 92%;">92%</div></div>
+                    <div style="margin-top: 10px;"><strong>Temporal Patterns</strong> <span style="float: right; color: #4fc3f7;">88%</span></div>
+                    <div class="progress-bar"><div class="fill orange" style="width: 88%;">88%</div></div>
+                    <div style="margin-top: 10px;"><strong>Waveform Shapes</strong> <span style="float: right; color: #4fc3f7;">85%</span></div>
+                    <div class="progress-bar"><div class="fill purple" style="width: 85%;">85%</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== TECHNOLOGY STACK ===== -->
+    <section>
+        <div class="container">
+            <div class="section-title">
+                <div class="icon"><i class="fas fa-cubes"></i></div>
+                <h2>Technology <span>Stack</span></h2>
+            </div>
+
+            <div class="grid-3">
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">🐍</div>
+                    <h4>Languages</h4>
+                    <div style="margin-top: 10px;">
+                        <span class="tech-tag python">Python 3.8+</span>
+                    </div>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">🧠</div>
+                    <h4>ML Framework</h4>
+                    <div style="margin-top: 10px;">
+                        <span class="tech-tag ml">TensorFlow</span>
+                        <span class="tech-tag ml">Keras</span>
+                    </div>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">📊</div>
+                    <h4>Data Processing</h4>
+                    <div style="margin-top: 10px;">
+                        <span class="tech-tag">NumPy</span>
+                        <span class="tech-tag">Pandas</span>
+                        <span class="tech-tag">Scikit-learn</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box" style="margin-top: 20px;">
+                <h4>💻 Hardware Requirements</h4>
+                <div class="grid-3">
+                    <div><strong>RAM:</strong> 8GB</div>
+                    <div><strong>Processor:</strong> Intel Core i5</div>
+                    <div><strong>OS:</strong> 64-bit Windows/Linux</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== BUSINESS VALUE ===== -->
+    <section style="background: #f8f9fa;">
+        <div class="container">
+            <div class="section-title">
+                <div class="icon"><i class="fas fa-building"></i></div>
+                <h2>Business <span>Value</span></h2>
+            </div>
+
+            <div class="grid-2">
+                <div class="card" style="border-top: 4px solid #4fc3f7;">
+                    <h4 style="color: #4fc3f7;">🏢 For Seismic Monitoring Organizations</h4>
+                    <ul>
+                        <li>⚡ Faster response time</li>
+                        <li>🎯 88% accuracy vs. manual methods</li>
+                        <li>💰 Reduced manual analysis costs</li>
+                        <li>🚀 Scalable across regions</li>
+                    </ul>
+                </div>
+                <div class="card" style="border-top: 4px solid #ff6b6b;">
+                    <h4 style="color: #ff6b6b;">🚨 For Emergency Response Teams</h4>
+                    <ul>
+                        <li>📢 Earlier warnings</li>
+                        <li>📊 Better impact assessment</li>
+                        <li>🆘 Faster response coordination</li>
+                        <li>🔄 Consistent, unbiased results</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTACT ===== -->
+    <section style="background: linear-gradient(135deg, #1a1a2e, #0f3460); color: white;">
+        <div class="container" style="text-align: center;">
+            <h2 style="font-size: 2rem; margin-bottom: 20px;">Interested in Building an <span style="color: #4fc3f7;">AI Solution</span>?</h2>
+            <p style="font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto 30px;">Let's discuss how AI can transform your business processes.</p>
+            <a href="mailto:thejeshwharan.theju@gmail.com" style="background: #4fc3f7; color: #1a1a2e; padding: 14px 45px; border-radius: 50px; text-decoration: none; font-weight: 600; display: inline-block; transition: 0.3s;">📧 Contact Me</a>
+            <div style="margin-top: 20px;">
+                <a href="../index.html#projects" style="color: #4fc3f7; text-decoration: none;">🔙 Back to Portfolio</a>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
